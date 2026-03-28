@@ -1,0 +1,6 @@
+orgparse==0.4.20251020
+pyparsing==3.3.2
+plotly==6.6.0
+numpy==2.4.3
+pandas==3.0.1
+kaleido==1.2.0
