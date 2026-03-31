@@ -1,3 +1,25 @@
+[project]
+name = "workload-vis"
+version = "0.1.0"
+description = "A very simple workload visualisation tool that operates on org-mode tables"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "kaleido>=1.2.0",
+    "numpy>=2.4.4",
+    "orgparse>=0.4.20251020",
+    "pandas>=3.0.2",
+    "plotly>=6.6.0",
+    "pyparsing>=3.3.2",
+]
+
+[dependency-groups]
+dev = [
+    "black>=26.3.1",
+    "flake8>=7.3.0",
+    "isort>=8.0.1",
+    "pre-commit>=4.5.1",
+]
 [tool.black]
 line-length = 79
 #include = '\.pyi?$'
