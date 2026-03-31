@@ -21,7 +21,7 @@ ORG_DATE_FORMAT = (
 
 
 EFFORT_NUMBER = pp.Combine(
-    (pp.Word(pp.nums) + pp.Optional("." + pp.OneOrMore(pp.Word(pp.nums))))
+    pp.Word(pp.nums) + pp.Optional("." + pp.OneOrMore(pp.Word(pp.nums)))
 )
 
 EFFORT_FORMAT = EFFORT_NUMBER + (pp.Literal("d") | pp.Literal("h"))
@@ -159,7 +159,9 @@ def generate_report(data, begin_date=None, end_date=None):
     begin_date = week_beginning_floor(begin_date)
     end_date = week_beginning_ceil(end_date)
 
-    not_blank_row = lambda r: sum([len(i) for i in r]) > 0
+    def not_blank_row(r):
+        return sum([len(i) for i in r]) > 0
+
     projects = [Project(*row) for row in data if not_blank_row(row)]
 
     generate_gantt(projects, begin_date, end_date)
