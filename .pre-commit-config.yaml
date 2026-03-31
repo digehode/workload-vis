@@ -29,3 +29,20 @@ repos:
     rev: v3.21.2
     hooks:
     -   id: pyupgrade
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.15.8
+  hooks:
+    # Run the linter.
+    - id: ruff-check
+    # Run the formatter.
+    - id: ruff-format
+- repo: https://github.com/pycqa/isort
+  rev: 8.0.1
+  hooks:
+    - id: isort
+      name: isort (python)
+- repo: https://github.com/PyCQA/flake8/
+  rev: 7.3.0
+  hooks:
+    -   id: flake8

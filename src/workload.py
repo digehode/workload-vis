@@ -1,10 +1,10 @@
 from datetime import date, timedelta
-from orgparse.date import OrgDate
-import pyparsing as pp
 from enum import Enum
-import plotly.express as px
-import math
+
 import pandas
+import plotly.express as px
+import pyparsing as pp
+from orgparse.date import OrgDate
 
 ORG_DATE_FORMAT = (
     "<"
@@ -55,9 +55,12 @@ class Project:
         return self.effort / length_hours
 
     def timeline_in_period(self, start_date, end_date):
-        """For a given period of time (start_date (inclusive) to end_date (exclusive) report on the project timeline.
+        """For a given period of time (start_date (inclusive) to
+        end_date (exclusive) report on the project timeline.
 
-        Returns TimelineState"""
+        Returns TimelineState
+
+        """
 
         if self.end < start_date or self.start >= end_date:
             # Either finishes before the period, or doesn't start until after
@@ -75,7 +78,8 @@ class Project:
             # Ends in the period
             return TimelineState.END
         raise Exception(
-            f"Couldn't work out where the task {self} sits relative to the given range ({start_date} to {end_date})"
+            f"Couldn't work out where the task {self} sits"
+            " relative to the given range ({start_date} to {end_date})"
         )
 
     def as_bounded_timeline_bar(self, start=None, end=None):
@@ -99,7 +103,12 @@ class Project:
         )
 
     def __str__(self):
-        return f"{self.name} begins on {self.start} and ends on {self.end} (a period of {self.length} days), requiring {self.effort} hours of time to complete at a rate of {self.FTE:.2f}FTE"
+        return (
+            f"{self.name} begins on {self.start} and ends on"
+            f"{self.end} (a period of {self.length} days), requiring "
+            f"{self.effort} hours of time to complete at a rate of "
+            f"{self.FTE:.2f}FTE"
+        )
 
 
 def parse_effort(effort_str, hours_per_day=7.5):
@@ -136,7 +145,11 @@ def generate_gantt(projects, start, end):
             bars.append(p.as_bounded_timeline_bar(start=start, end=end))
             print(bars[-1])
     fig = px.timeline(
-        pandas.DataFrame(bars), x_start="Start", x_end="End", y="Task", color="FTE"
+        pandas.DataFrame(bars),
+        x_start="Start",
+        x_end="End",
+        y="Task",
+        color="FTE",
     )
     fig.update_yaxes(autorange="reversed")
     fig.write_image("fig1.png")
@@ -144,7 +157,10 @@ def generate_gantt(projects, start, end):
 
 def generate_report(data, begin_date=None, end_date=None):
     # TODO: move to consistent start/end instead of begin/end
-    # TODO: factor out the bounding/inclusion bit below so it can be reused and gantt can be drawn separately
+
+    # TODO: factor out the bounding/inclusion bit below so it can be
+    # reused and gantt can be drawn separately
+
     # Set default dates if necessary, parse org dates if necessary
     if begin_date is None:
         begin_date = date.today()
@@ -179,7 +195,8 @@ def generate_report(data, begin_date=None, end_date=None):
         fte_total = 0
 
         for p in projects:
-            # FTE needs to be reduced if it starts or ends - move calc into project class?
+            # FTE needs to be reduced if it starts or ends - move calc
+            # into project class?
             timeline_status = p.timeline_in_period(cursor_date, week_end)
             if timeline_status == TimelineState.NULL:
                 continue
@@ -201,17 +218,42 @@ def test():
     print("Parsing org date")
     print(parse_org_date("<2026-03-27>"))
     print("Parsing some effort estimates")
-    for i in ["2d", "10d", "0.2d", "1.0d", "2h", "10h", "0.2h", "1.92 h", "1123.567 h"]:
+    for i in [
+        "2d",
+        "10d",
+        "0.2d",
+        "1.0d",
+        "2h",
+        "10h",
+        "0.2h",
+        "1.92 h",
+        "1123.567 h",
+    ]:
         print(f"Parsing {i} results in {parse_effort(i)}")
 
     print()
     print("Test with cached data")
     data = [
         ["ABC", "<2026-03-27 Fri>", "<2026-04-03 Fri>", "2d"],
-        ["AI Automation Apprenticeship", "<2026-03-26 Thu>", "<2026-09-01 Tue>", "20d"],
-        ["Concrete International Offer", "<2026-03-28 Sat>", "<2026-04-01 Wed>", "2d"],
+        [
+            "AI Automation Apprenticeship",
+            "<2026-03-26 Thu>",
+            "<2026-09-01 Tue>",
+            "20d",
+        ],
+        [
+            "Concrete International Offer",
+            "<2026-03-28 Sat>",
+            "<2026-04-01 Wed>",
+            "2d",
+        ],
         ["Workload Planning", "<2026-03-26 Thu>", "<2026-03-27 Fri>", "3h"],
-        ["AI Education Bitesize", "<2026-03-23 Mon>", "<2026-04-08 Wed>", "1d"],
+        [
+            "AI Education Bitesize",
+            "<2026-03-23 Mon>",
+            "<2026-04-08 Wed>",
+            "1d",
+        ],
         [
             "DCP for CU AI Curated Programmes",
             "<2026-03-23 Mon>",
@@ -233,7 +275,9 @@ def test():
         ["", "", "", ""],
     ]
     generate_report(
-        data, begin_date=date.today(), end_date=date.today() + timedelta(days=62)
+        data,
+        begin_date=date.today(),
+        end_date=date.today() + timedelta(days=62),
     )
 
 
